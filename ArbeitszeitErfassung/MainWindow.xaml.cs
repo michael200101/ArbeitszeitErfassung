@@ -22,6 +22,7 @@ public partial class MainWindow : Window
     static DateTime startTime;
     static DateTime pauseStartTime;
     static TimeSpan pauseTime;
+    static TimeSpan pauseTimeCache;
     static TimeSpan workTime;
     private static System.Timers.Timer startClock;
 
@@ -40,7 +41,7 @@ public partial class MainWindow : Window
         {
             Text1.Text = "Gespeicherter Pfad: " + Properties.Settings.Default.Speicherpfad;
         }
-        
+
     }
 
     private void Bestätigen_Click(object sender, RoutedEventArgs e)
@@ -61,11 +62,39 @@ public partial class MainWindow : Window
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        SetTimer();
-        isStarted = true;
-        startTime = DateTime.Now;
-        Text1.Text = "Start Zeit: " + startTime;
-        Button1.Content = "Zeiterfassung gestartet";
+        if (isStarted == false)
+        {
+            SetTimer();
+            isStarted = true;
+            startTime = DateTime.Now;
+            Text1.Text = "Start Zeit: " + startTime;
+            Button1.Content = "Zeiterfassung gestartet";
+        }
+        else
+        {
+            var result = MessageBox.Show("Erfassung läuft bereits. " +
+                "Möchtest du sie neu starten?", "Error", MessageBoxButton.YesNo, MessageBoxImage.Information);
+
+            switch (result)
+            {
+                case MessageBoxResult.Cancel:
+                    
+                    break;
+                case MessageBoxResult.Yes:
+                    startTime = DateTime.Now;
+                    Text1.Text = "Start Zeit: " + startTime;
+                    Button1.Content = "Zeiterfassung gestartet";
+                    if (pauseTime != pauseTimeCache)
+                    {
+                        pauseTime = pauseTime - pauseTime;
+                        Text5.Text = "Pausenzeit Insgesamt: " + $"{(int)pauseTime.TotalHours:D2}:{pauseTime.Minutes:D2}:{pauseTime.Seconds:D2}";
+                    }
+                    break;
+                case MessageBoxResult.No:
+                    
+                    break;
+            }
+        }
     }
 
     /*private void Button_Click1(object sender, RoutedEventArgs e)
@@ -135,12 +164,12 @@ public partial class MainWindow : Window
             MessageBox.Show("Kein gültiger Speicherpfad vorhanden. Bitte zuerst bestätigen.");
             return;
         }
-        dateiNameCSV = "ArbeitszeitenCSV-"+startTime.Year+"-"+startTime.Month+".csv";
+        dateiNameCSV = "ArbeitszeitenCSV-" + startTime.Year + "-" + startTime.Month + ".csv";
         string csvPath = System.IO.Path.Combine(pfad, dateiNameCSV);
 
         using (StreamWriter datei = new StreamWriter(csvPath, true))
         {
-            datei.WriteLine("Start: ;" + startTime  );
+            datei.WriteLine("Start: ;" + startTime);
             datei.WriteLine("Ende: ;" + DateTime.Now);
             datei.WriteLine("Dauer der Pausen: ;" + pauseTime.ToString(@"hh\:mm\:ss"));
             datei.WriteLine("Arbeitszeit: ;" + workTime.ToString(@"hh\:mm\:ss"));
@@ -148,6 +177,7 @@ public partial class MainWindow : Window
         }
 
         SaveToExcel(pfad);
+        MessageBox.Show("Datei Erfolgreich gespeichert gespeichert unter: " + pfad);
     }
 
     private void SaveToExcel(string pfad)
