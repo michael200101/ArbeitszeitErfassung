@@ -36,12 +36,10 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        // Zeige gespeicherten Pfad beim Start
         if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.Speicherpfad))
         {
             Text1.Text = "Gespeicherter Pfad: " + Properties.Settings.Default.Speicherpfad;
         }
-
     }
 
     private void Bestätigen_Click(object sender, RoutedEventArgs e)
@@ -96,15 +94,6 @@ public partial class MainWindow : Window
             }
         }
     }
-
-    /*private void Button_Click1(object sender, RoutedEventArgs e)
-    {
-        if (isStarted && !pauseIsStarted)
-        {
-            TimeSpan elapsed = DateTime.Now - startTime - pauseTime;
-            Text4.Text = "Verstrichene Zeit: " + $"{(int)elapsed.TotalHours:D2}:{elapsed.Minutes:D2}:{elapsed.Seconds:D2}";
-        }
-    }*/
 
     private void Button_Click2(object sender, RoutedEventArgs e)
     {
