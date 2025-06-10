@@ -71,7 +71,7 @@ public partial class MainWindow : Window
         else
         {
             var result = MessageBox.Show("Erfassung läuft bereits. " +
-                "Möchtest du sie neu starten?", "Error", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                "Möchtest du sie neu starten?", "Warnung", MessageBoxButton.YesNo, MessageBoxImage.Information);
 
             switch (result)
             {
@@ -166,7 +166,7 @@ public partial class MainWindow : Window
         }
 
         SaveToExcel(pfad);
-        MessageBox.Show("Datei Erfolgreich gespeichert gespeichert unter: " + pfad);
+        MessageBox.Show("Datei Erfolgreich gespeichert gespeichert unter: " + pfad,"Erfolgreich Gespeichert");
     }
 
     private void SaveToExcel(string pfad)
