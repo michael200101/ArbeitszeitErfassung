@@ -41,3 +41,10 @@ jobs:
 
     - name: Publish application
       run: dotnet publish $env:Project_Path --configuration ${{ matrix.configuration }} --output publish_output
+
+
+    - name: Upload build output
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-publish
+        path: publish_output
