@@ -1,0 +1,43 @@
+name: .NET Desktop Build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    runs-on: windows-latest
+
+    env:
+      Solution_Name: ArbeitszeitErfassung.sln
+      Project_Path: ArbeitszeitErfassung/ArbeitszeitErfassung.csproj
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Restore solution
+      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=${{ matrix.configuration }}
+
+    - name: Build solution
+      run: msbuild $env:Solution_Name /p:Configuration=${{ matrix.configuration }}
+
+    - name: Publish application
+      run: dotnet publish $env:Project_Path --configuration ${{ matrix.configuration }} --output publish_output
